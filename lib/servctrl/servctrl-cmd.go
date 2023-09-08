@@ -243,7 +243,7 @@ func printerOutErr() {
 
 				// ": Done (" -> set ServStats.Status = ONLINE
 				// using ": Done (" instead of "Done" to avoid false positives (issue #112)
-				if strings.Contains(line, "INFO") && strings.Contains(line, ": Done (") {
+				if strings.Contains(line, "INFO") && strings.Contains(line, "Done (") {
 					servstats.Stats.Status = errco.SERVER_STATUS_ONLINE
 					errco.NewLogln(errco.TYPE_INF, errco.LVL_1, errco.ERROR_NIL, "MINECRAFT SERVER IS ONLINE!")
 
