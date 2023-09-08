@@ -24,7 +24,7 @@ jobs:
 
       - name: Set short SHA
         id: short_sha
-        run: echo ::set-output name=sha::$(echo ${GITHUB_SHA} | cut -c 1-7)
+        run: echo "sha=$(echo ${GITHUB_SHA} | cut -c 1-7)" >> $GITHUB_OUTPUT
 
       - name: Setup Go
         uses: actions/setup-go@v3
