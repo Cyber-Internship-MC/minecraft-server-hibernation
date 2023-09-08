@@ -1,3 +1,57 @@
-# build for win, linux, macos
-
 name: build
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        goos: [linux, darwin, windows]
+        goarch: [amd64, arm64]
+
+    runs-on: ubuntu-latest
+    env:
+      GOOS: ${{ matrix.goos }}
+      GOARCH: ${{ matrix.goarch }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set short SHA
+        id: short_sha
+        run: echo ::set-output name=sha::$(echo ${GITHUB_SHA} | cut -c 1-7)
+
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version-file: go.mod
+          cache: true
+          cache-dependency-path: go.sum
+
+      - name: Build
+        run: go build -o build/msh-${{ steps.short_sha.outputs.sha }}
+
+      - name: Copy files (Windows)
+        if: matrix.goos == 'windows'
+        run: |
+          mkdir output
+          cp build/msh-${{ steps.short_sha.outputs.sha }} output/msh-${{ steps.short_sha.outputs.sha }}.exe
+          cp msh-config.json output/msh-config.json
+
+      - name: Copy files (non-Windows)
+        if: matrix.goos != 'windows'
+        run: |
+          mkdir output
+          cp build/msh-${{ steps.short_sha.outputs.sha }} output/msh-${{ steps.short_sha.outputs.sha }}
+          cp msh-config.json output/msh-config.json
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: msh-${{ steps.short_sha.outputs.sha }}-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: output
