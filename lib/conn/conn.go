@@ -139,7 +139,8 @@ func HandlerClientConn(clientConn net.Conn) {
 			}
 
 			// msh JOIN response (answer client with text in the loadscreen)
-			mes := buildMessage(reqType, "Server start command issued. Please wait... "+servstats.Stats.LoadProgress)
+			mes := buildMessage(reqType, "Server is now starting. Please reconnect after 15s...\n服务器正在启动，请15秒后重新连接...")
+			// mes := buildMessage(reqType, "Server start command issued. Please wait... "+servstats.Stats.LoadProgress)
 			clientConn.Write(mes)
 			errco.NewLogln(errco.TYPE_BYT, errco.LVL_4, errco.ERROR_NIL, "%smsh --> client%s: %v", errco.COLOR_PURPLE, errco.COLOR_RESET, mes)
 
